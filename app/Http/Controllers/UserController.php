@@ -18,6 +18,8 @@ class UserController extends Controller
     
 
     public function register (Request $request) {
+        
+        // dd( $request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -27,21 +29,35 @@ class UserController extends Controller
         {
             return response(['errors'=>$validator->errors()->all()], 422);
         }
-        $request['password']=Hash::make($request['password']);
-        $request['remember_token'] = Str::random(10);
-        $user = User::create($request->toArray());
-        $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-        $response = ['token' => $token];
-        // return response($response, 200);
-        if()
-        {
-            return response()->json(
-                [
-                    'status'=> $this->response_code,
-                    'message'=> 'Successfuly Changed',
-                    'data' => $response
-                ], 200);
-        }
+
+        DB::beginTransaction();
+        try {
+
+                User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'user_type' => 2,
+                    'password' => Hash::make($request->password),
+                ]);
+
+        DB::commit();
+        $response['status'] = true;
+    } catch (\Exception $e) {
+        $response['data']=$e->getMessage();
+        $response['status'] = false;
+        DB::rollback();
+    }
+        
+    return response()->json($response);
+        // if()
+        // {
+        //     return response()->json(
+        //         [
+        //             'status'=> $this->response_code,
+        //             'message'=> 'Successfuly Changed',
+        //             'data' => $response
+        //         ], 200);
+        // }
     
         
     }
@@ -100,9 +116,13 @@ class UserController extends Controller
 
     public function logout()
     {  
-        Auth::logout();
-        Session::flush();
-        // return Redirect::to('/login');
+        // dd('hi');
+       if (Auth::check()) {
+            Auth::user()->token()->revoke();
+            return response()->json(['success' =>'Successfully logged out of application'],200);
+        }else{
+            return response()->json(['error' =>'api.something_went_wrong'], 500);
+        }
     }
     public function profile()
     {
@@ -195,6 +215,22 @@ class UserController extends Controller
            }
 
        }
+   }
+
+   public function test()
+   {
+       $auth_id=Auth::id();
+      
+
+       return $auth_id;
+   }
+
+
+   public function copy()
+   {
+       
+
+       dd('hi');
    }
     
 

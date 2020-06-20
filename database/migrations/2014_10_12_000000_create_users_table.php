@@ -19,6 +19,16 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->integer('user_type')->nullable();
+            $table->string('restaurent_name')->nullable();
+            $table->string('tax_id')->nullable();
+            $table->string('iban')->nullable();
+            $table->text('address')->nullable();
+            $table->text('restaurent_address')->nullable();
+            $table->string('contact')->nullable();
+            $table->double('lat')->nullable();
+            $table->double('lon')->nullable();
+            $table->string('image')->nullable()->default('/profile.png');
             $table->rememberToken();
             $table->timestamps();
         });
