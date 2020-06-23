@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHotelProductsTable extends Migration
+class CreateProductOffersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateHotelProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('hotel_products', function (Blueprint $table) {
+        Schema::create('product_offers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
             $table->string('name')->nullable();
+            $table->text('type')->nullable();
             $table->text('description')->nullable();
             $table->string('price')->nullable();
-            $table->string('size')->nullable();
+            $table->string('discount')->nullable();
+            $table->string('start_date')->nullable();
+            $table->string('end_date')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +33,6 @@ class CreateHotelProductsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hotel_products');
+        Schema::dropIfExists('product_offers');
     }
 }
